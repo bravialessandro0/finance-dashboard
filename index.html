@@ -449,6 +449,21 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
 .ia-summary{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5;}
 .ia-analysis{font-size:13px;color:var(--text2);line-height:1.75;display:flex;flex-direction:column;gap:12px;}
 .ia-analysis p{margin:0;}
+.ia-analysis.collapsed{
+  max-height:92px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom, black 55%, transparent 100%);
+  mask-image:linear-gradient(to bottom, black 55%, transparent 100%);
+}
+.ia-toggle{
+  display:flex;align-items:center;gap:5px;
+  margin-top:12px;
+  background:none;border:none;padding:0;
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:color 0.15s;
+}
+.ia-toggle:hover{color:var(--text);}
+.ia-toggle svg{transition:transform 0.2s;}
+.ia-toggle.open svg{transform:rotate(180deg);}
 .ia-subtitle{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:500;margin:20px 0 12px;}
 .ia-projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
 .ia-project{
@@ -1579,6 +1594,22 @@ function paragraphs(text) {
   return text.split(/\n+/).filter(p => p.trim()).map(p => `<p>${esc(p.trim())}</p>`).join('');
 }
 
+function toggleBtnHtml(prefix) {
+  return `<button class="ia-toggle" id="${prefix}-toggle" onclick="toggleAnalysis('${prefix}')">
+    <span>Mostra analisi completa</span>
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>`;
+}
+
+function toggleAnalysis(prefix) {
+  const el = document.getElementById(prefix + '-macro-text');
+  const btn = document.getElementById(prefix + '-toggle');
+  const wasCollapsed = el.classList.contains('collapsed');
+  el.classList.toggle('collapsed');
+  btn.classList.toggle('open');
+  btn.querySelector('span').textContent = wasCollapsed ? 'Mostra meno' : 'Mostra analisi completa';
+}
+
 function sourcesHtml(sources) {
   return (sources || []).map(s => {
     let host = s;
@@ -1618,7 +1649,8 @@ async function loadCrypto() {
     inner.innerHTML = `
       <div class="ia-meta"><div class="ia-dot"></div>Aggiornato ${fmtUpdated(d.updated_at)}</div>
       ${d.verdict_summary ? `<div class="ia-summary">${esc(d.verdict_summary)}</div>` : ''}
-      <div class="ia-analysis">${paragraphs(d.macro_analysis)}</div>
+      <div class="ia-analysis collapsed" id="crypto-macro-text">${paragraphs(d.macro_analysis)}</div>
+      ${toggleBtnHtml('crypto')}
       ${projectsHtml ? `<div class="ia-subtitle">Progetti scoutati</div><div class="ia-projects">${projectsHtml}</div>` : ''}
       ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
     `;
@@ -1647,7 +1679,8 @@ async function loadNasdaq() {
     inner.innerHTML = `
       <div class="ia-meta"><div class="ia-dot"></div>Aggiornato ${fmtUpdated(d.updated_at)}</div>
       ${d.bias_summary ? `<div class="ia-summary">${esc(d.bias_summary)}</div>` : ''}
-      <div class="ia-analysis">${paragraphs(d.macro_analysis)}</div>
+      <div class="ia-analysis collapsed" id="nasdaq-macro-text">${paragraphs(d.macro_analysis)}</div>
+      ${toggleBtnHtml('nasdaq')}
       ${d.key_levels ? `<div class="ia-subtitle">Livelli chiave</div><div class="ia-levels">${esc(d.key_levels)}</div>` : ''}
       ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
     `;
