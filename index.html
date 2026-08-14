@@ -1371,7 +1371,7 @@ function updateDonut() {
 //  3D TILT
 // ──────────────────────────────────────────
 function initTilt() {
-  const cards = document.querySelectorAll('.income-card, .chart-card');
+  const cards = document.querySelectorAll('.income-card, .chart-card:not(.ia-card)');
   cards.forEach(card => {
     const isSmall = card.classList.contains('income-card');
     const maxRot = isSmall ? 11 : 6;
