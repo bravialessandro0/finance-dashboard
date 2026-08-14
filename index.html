@@ -437,6 +437,40 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
 .badge-g{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
 .badge-b{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);}
 .badge-p{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-border);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);}
+.badge-red{background:rgba(248,113,113,0.10);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
+
+/* ── INVESTMENT AGENT VIEW ── */
+.view{display:flex;flex-direction:column;flex:1;overflow:hidden;}
+.ia-content{flex:1;overflow-y:auto;padding:20px 28px 28px;display:flex;flex-direction:column;gap:18px;}
+.ia-card{max-width:100%;}
+.ia-meta{font-size:11px;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.ia-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);}
+.ia-summary{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5;}
+.ia-analysis{font-size:13px;color:var(--text2);line-height:1.75;display:flex;flex-direction:column;gap:12px;}
+.ia-analysis p{margin:0;}
+.ia-subtitle{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:500;margin:20px 0 12px;}
+.ia-projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.ia-project{
+  background:var(--bg-card2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 14px;
+}
+.ia-project-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.ia-project-ticker{font-size:11px;color:var(--purple);font-weight:500;margin-bottom:6px;}
+.ia-project-reason{font-size:12px;color:var(--text2);line-height:1.5;}
+.ia-levels{font-size:13px;color:var(--text2);line-height:1.7;}
+.ia-sources{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+.ia-source{
+  font-size:11px;color:var(--text3);
+  background:var(--bg-card2);border:1px solid var(--border);
+  border-radius:20px;padding:4px 11px;
+  text-decoration:none;transition:all 0.15s;
+}
+.ia-source:hover{color:var(--text2);border-color:var(--border2);}
+.ia-pending{text-align:center;padding:48px 0;color:var(--text3);font-size:13px;}
+.ia-pending .empty-icon{font-size:28px;margin-bottom:10px;opacity:0.4;}
 
 .empty{text-align:center;padding:36px 0;color:var(--text3);font-size:13px;}
 .empty-icon{font-size:28px;margin-bottom:8px;opacity:0.4;}
@@ -545,7 +579,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
 <aside class="sidebar">
   <div class="logo">F</div>
 
-  <div class="nav-item active">
+  <div class="nav-item active" id="nav-dashboard" onclick="showView('dashboard')">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     <div class="tooltip">Dashboard</div>
   </div>
@@ -565,6 +599,11 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="tooltip">Portafoglio</div>
   </div>
 
+  <div class="nav-item" id="nav-investment" onclick="showView('investment')">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4.5 4.5 0 0 0-4.5 4.5c0 1 .3 1.8.8 2.5H6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h.3c-.2.6-.3 1.3-.3 2a4.5 4.5 0 0 0 4.5 4.5v1.5"/><path d="M12 2a4.5 4.5 0 0 1 4.5 4.5c0 1-.3 1.8-.8 2.5H18a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.3c.2.6.3 1.3.3 2a4.5 4.5 0 0 1-4.5 4.5v1.5"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+    <div class="tooltip">Investment Agent</div>
+  </div>
+
   <div class="sidebar-bottom">
     <div class="nav-item">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -575,6 +614,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
 
 <!-- MAIN -->
 <main class="main">
+
+<div id="view-dashboard" class="view">
 
   <!-- HEADER -->
   <header class="header">
@@ -740,6 +781,50 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
     </div>
 
   </div>
+</div>
+
+<!-- VIEW: INVESTMENT AGENT -->
+<div id="view-investment" class="view" style="display:none;">
+
+  <header class="header">
+    <div class="balance-wrap">
+      <div class="balance-label">Investment Agent</div>
+      <div class="balance-row">
+        <div class="balance-amount" style="font-size:22px;">Analisi macro automatica</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="loadInvestmentData()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Aggiorna
+      </button>
+    </div>
+  </header>
+
+  <div class="ia-content">
+
+    <div class="chart-card ia-card" id="crypto-analysis-card">
+      <div class="chart-header">
+        <div class="chart-title">Crypto — Analisi Macro &amp; Scouting</div>
+        <span class="badge" id="crypto-verdict-badge">—</span>
+      </div>
+      <div id="crypto-analysis-inner">
+        <div class="ia-pending"><div class="empty-icon">⏳</div>Caricamento analisi...</div>
+      </div>
+    </div>
+
+    <div class="chart-card ia-card" id="nasdaq-analysis-card">
+      <div class="chart-header">
+        <div class="chart-title">Nasdaq / Opzioni — Bias Giornaliero</div>
+        <span class="badge" id="nasdaq-bias-badge">—</span>
+      </div>
+      <div id="nasdaq-analysis-inner">
+        <div class="ia-pending"><div class="empty-icon">⏳</div>Caricamento analisi...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
 </main>
 
 <!-- MODAL -->
@@ -1459,6 +1544,118 @@ function exportExcel() {
   const a = document.createElement('a'); a.href = url; a.download = 'entrate_' + today() + '.xls'; a.click();
   URL.revokeObjectURL(url);
   toast('Excel esportato');
+}
+
+// ──────────────────────────────────────────
+//  INVESTMENT AGENT VIEW
+// ──────────────────────────────────────────
+const GH_OWNER = 'bravialessandro0';
+const GH_REPO  = 'finance-dashboard';
+const CRYPTO_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/crypto-analysis.json`;
+const NASDAQ_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/data/nasdaq-analysis.json`;
+
+let investmentLoaded = false;
+
+function showView(name) {
+  const views = { dashboard: 'view-dashboard', investment: 'view-investment' };
+  Object.entries(views).forEach(([key, id]) => {
+    document.getElementById(id).style.display = key === name ? 'flex' : 'none';
+  });
+  document.getElementById('nav-dashboard').classList.toggle('active', name === 'dashboard');
+  document.getElementById('nav-investment').classList.toggle('active', name === 'investment');
+  if (name === 'investment' && !investmentLoaded) loadInvestmentData();
+}
+
+function fmtUpdated(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' +
+         d.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+}
+
+function paragraphs(text) {
+  if (!text) return '';
+  return text.split(/\n+/).filter(p => p.trim()).map(p => `<p>${esc(p.trim())}</p>`).join('');
+}
+
+function sourcesHtml(sources) {
+  return (sources || []).map(s => {
+    let host = s;
+    try { host = new URL(s).hostname.replace('www.', ''); } catch (e) {}
+    return `<a class="ia-source" href="${esc(s)}" target="_blank" rel="noopener" title="${esc(s)}">${esc(host)}</a>`;
+  }).join('');
+}
+
+async function loadInvestmentData() {
+  investmentLoaded = true;
+  loadCrypto();
+  loadNasdaq();
+}
+
+async function loadCrypto() {
+  const inner = document.getElementById('crypto-analysis-inner');
+  const badge = document.getElementById('crypto-verdict-badge');
+  try {
+    const res = await fetch(CRYPTO_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('not found');
+    const d = await res.json();
+
+    const verdictMap = { accumulate: ['Accumula', 'badge-g'], wait: ['Attendi', 'badge-amber'], reduce: ['Riduci', 'badge-red'] };
+    const [vLabel, vClass] = verdictMap[d.verdict] || ['—', 'badge-b'];
+    badge.className = 'badge ' + vClass;
+    badge.textContent = vLabel;
+
+    const projectsHtml = (d.scouted_projects || []).map(p => `
+      <div class="ia-project">
+        <div class="ia-project-name">${esc(p.name || '')}</div>
+        ${p.ticker ? `<div class="ia-project-ticker">${esc(p.ticker)}</div>` : ''}
+        <div class="ia-project-reason">${esc(p.reasoning || '')}</div>
+      </div>`).join('');
+
+    const srcHtml = sourcesHtml(d.sources);
+
+    inner.innerHTML = `
+      <div class="ia-meta"><div class="ia-dot"></div>Aggiornato ${fmtUpdated(d.updated_at)}</div>
+      ${d.verdict_summary ? `<div class="ia-summary">${esc(d.verdict_summary)}</div>` : ''}
+      <div class="ia-analysis">${paragraphs(d.macro_analysis)}</div>
+      ${projectsHtml ? `<div class="ia-subtitle">Progetti scoutati</div><div class="ia-projects">${projectsHtml}</div>` : ''}
+      ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
+    `;
+  } catch (e) {
+    badge.className = 'badge';
+    badge.textContent = '—';
+    inner.innerHTML = `<div class="ia-pending"><div class="empty-icon">🕐</div>In attesa del primo aggiornamento automatico.<br>La routine gira 3 volte al giorno (08:00 / 14:00 / 21:00).</div>`;
+  }
+}
+
+async function loadNasdaq() {
+  const inner = document.getElementById('nasdaq-analysis-inner');
+  const badge = document.getElementById('nasdaq-bias-badge');
+  try {
+    const res = await fetch(NASDAQ_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('not found');
+    const d = await res.json();
+
+    const biasMap = { bullish: ['Bullish', 'badge-g'], bearish: ['Bearish', 'badge-red'], neutral: ['Neutral', 'badge-b'] };
+    const [bLabel, bClass] = biasMap[d.bias] || ['—', 'badge-b'];
+    badge.className = 'badge ' + bClass;
+    badge.textContent = bLabel;
+
+    const srcHtml = sourcesHtml(d.sources);
+
+    inner.innerHTML = `
+      <div class="ia-meta"><div class="ia-dot"></div>Aggiornato ${fmtUpdated(d.updated_at)}</div>
+      ${d.bias_summary ? `<div class="ia-summary">${esc(d.bias_summary)}</div>` : ''}
+      <div class="ia-analysis">${paragraphs(d.macro_analysis)}</div>
+      ${d.key_levels ? `<div class="ia-subtitle">Livelli chiave</div><div class="ia-levels">${esc(d.key_levels)}</div>` : ''}
+      ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
+    `;
+  } catch (e) {
+    badge.className = 'badge';
+    badge.textContent = '—';
+    inner.innerHTML = `<div class="ia-pending"><div class="empty-icon">🕐</div>In attesa del primo aggiornamento automatico.<br>La routine gira ogni giorno alle 14:00.</div>`;
+  }
 }
 </script>
 </body>
