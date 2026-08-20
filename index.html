@@ -59,6 +59,16 @@ body{
 @keyframes border-rotate {
   to { --ba: 360deg; }
 }
+@keyframes ia-spin {
+  to { transform: rotate(360deg); }
+}
+#ia-refresh-icon.spinning {
+  animation: ia-spin 0.7s linear infinite;
+}
+#ia-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 
 /* ── SIDEBAR ── */
 .sidebar{
@@ -809,8 +819,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
       </div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-ghost" onclick="loadInvestmentData()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <button class="btn btn-ghost" id="ia-refresh-btn" onclick="loadInvestmentData(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="ia-refresh-icon"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         Aggiorna
       </button>
     </div>
@@ -1618,10 +1628,24 @@ function sourcesHtml(sources) {
   }).join('');
 }
 
-async function loadInvestmentData() {
+let lastCryptoUpdatedAt = null;
+let lastNasdaqUpdatedAt = null;
+
+async function loadInvestmentData(manual) {
   investmentLoaded = true;
-  loadCrypto();
-  loadNasdaq();
+  const btn = document.getElementById('ia-refresh-btn');
+  const icon = document.getElementById('ia-refresh-icon');
+  if (btn) btn.disabled = true;
+  if (icon) icon.classList.add('spinning');
+
+  const [cryptoChanged, nasdaqChanged] = await Promise.all([loadCrypto(), loadNasdaq()]);
+
+  if (btn) btn.disabled = false;
+  if (icon) icon.classList.remove('spinning');
+
+  if (manual) {
+    toast(cryptoChanged || nasdaqChanged ? 'Nuovi dati disponibili' : 'Nessun nuovo aggiornamento dalla routine');
+  }
 }
 
 async function loadCrypto() {
@@ -1631,6 +1655,8 @@ async function loadCrypto() {
     const res = await fetch(CRYPTO_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('not found');
     const d = await res.json();
+    const changed = lastCryptoUpdatedAt !== null && lastCryptoUpdatedAt !== d.updated_at;
+    lastCryptoUpdatedAt = d.updated_at;
 
     const verdictMap = { accumulate: ['Accumula', 'badge-g'], wait: ['Attendi', 'badge-amber'], reduce: ['Riduci', 'badge-red'] };
     const [vLabel, vClass] = verdictMap[d.verdict] || ['—', 'badge-b'];
@@ -1654,10 +1680,12 @@ async function loadCrypto() {
       ${projectsHtml ? `<div class="ia-subtitle">Progetti scoutati</div><div class="ia-projects">${projectsHtml}</div>` : ''}
       ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
     `;
+    return changed;
   } catch (e) {
     badge.className = 'badge';
     badge.textContent = '—';
     inner.innerHTML = `<div class="ia-pending"><div class="empty-icon">🕐</div>In attesa del primo aggiornamento automatico.<br>La routine gira 3 volte al giorno (08:00 / 14:00 / 21:00).</div>`;
+    return false;
   }
 }
 
@@ -1668,6 +1696,8 @@ async function loadNasdaq() {
     const res = await fetch(NASDAQ_URL + '?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('not found');
     const d = await res.json();
+    const changed = lastNasdaqUpdatedAt !== null && lastNasdaqUpdatedAt !== d.updated_at;
+    lastNasdaqUpdatedAt = d.updated_at;
 
     const biasMap = { bullish: ['Bullish', 'badge-g'], bearish: ['Bearish', 'badge-red'], neutral: ['Neutral', 'badge-b'] };
     const [bLabel, bClass] = biasMap[d.bias] || ['—', 'badge-b'];
@@ -1684,10 +1714,12 @@ async function loadNasdaq() {
       ${d.key_levels ? `<div class="ia-subtitle">Livelli chiave</div><div class="ia-levels">${esc(d.key_levels)}</div>` : ''}
       ${srcHtml ? `<div class="ia-sources">${srcHtml}</div>` : ''}
     `;
+    return changed;
   } catch (e) {
     badge.className = 'badge';
     badge.textContent = '—';
     inner.innerHTML = `<div class="ia-pending"><div class="empty-icon">🕐</div>In attesa del primo aggiornamento automatico.<br>La routine gira ogni giorno alle 14:00.</div>`;
+    return false;
   }
 }
 </script>
